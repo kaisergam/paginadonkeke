@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Técnico en Programación - EEST N°3 Islas Malvinas</title>
+  <link rel="stylesheet" href="Styles/hi.css">
+  <style>
+    .dropdown-menu { background: linear-gradient(90deg, rgba(6, 26, 52, 0.98) 0%, rgba(21, 72, 121, 0.95) 58%, rgba(47, 140, 184, 0.82) 100%); border-color: rgba(117, 207, 239, 0.4); left: 50%; transform: translateX(-50%) translateY(8px) scale(0.98); transform-origin: top center; }
+    .dropdown-menu li + li { margin-top: 12px; }
+    .dropdown-menu li a { display: block; padding: 8px 16px; color: #fff; }
+    .dropdown-menu li a:hover { background: rgba(117, 207, 239, 0.28); color: #fff; }
+    .nav-dropdown:not(.is-closing):hover .dropdown-menu,
+    .nav-dropdown.is-open .dropdown-menu,
+    .nav-dropdown:not(.is-closing):focus-within .dropdown-menu { transform: translateX(-50%) translateY(0) scale(1); }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    footer { margin-top: auto; }
+  
+
+    /* ── Nav-toggle alignment + footer fix ── */
+    @media (max-width: 768px) {
+      /* Grid de 3 columnas: logo | h1 (crece) | botón hamburguesa
+         Segunda fila: nav ocupa todo el ancho                      */
+      .header-container {
+        display: grid !important;
+        grid-template-columns: auto 1fr auto !important;
+        grid-template-rows: auto auto !important;
+        align-items: center !important;
+        gap: 0 10px !important;
+        padding: 10px 16px !important;
+      }
+      .header-container .logo {
+        grid-column: 1 !important;
+        grid-row: 1 !important;
+        align-self: center !important;
+      }
+      .header-container h1 {
+        grid-column: 2 !important;
+        grid-row: 1 !important;
+        align-self: center !important;
+        margin: 0 !important;
+        font-size: clamp(0.85rem, 4vw, 1.2rem) !important;
+        line-height: 1.2 !important;
+        white-space: normal !important;
+      }
+      .nav-toggle {
+        grid-column: 3 !important;
+        grid-row: 1 !important;
+        align-self: center !important;
+        justify-self: end !important;
+        margin: 0 !important;
+      }
+      .header-container nav {
+        grid-column: 1 / -1 !important;
+        grid-row: 2 !important;
+      }
+    }
+
+    /* Footer: elimina el degradado hacia blanco, fondo azul marino sólido a ambos lados */
+    footer {
+      background: rgb(6, 26, 52) !important;
+      background-image: none !important;
+    }
+
+    /* ── Dropdown mobile fix ── */
+    @media (max-width: 768px) {
+      .dropdown-menu {
+        position: static !important;
+        transform: none !important;
+        left: auto !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        background: linear-gradient(135deg, rgba(6, 26, 52, 0.98) 0%, rgba(21, 72, 121, 0.97) 58%, rgba(47, 140, 184, 0.90) 100%) !important;
+        border: 1px solid rgba(117, 207, 239, 0.35) !important;
+        border-radius: 10px;
+        margin-top: 6px;
+        padding: 10px 0;
+        display: none;
+        width: 100%;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+      }
+      .nav-dropdown.is-open .dropdown-menu {
+        display: block !important;
+      }
+      .dropdown-menu li + li {
+        margin-top: 2px !important;
+      }
+      .dropdown-menu li a {
+        color: #fff !important;
+        padding: 13px 22px !important;
+        font-size: 1rem !important;
+        display: block !important;
+        letter-spacing: 0.01em;
+      }
+      .dropdown-menu li a:hover {
+        background: rgba(117, 207, 239, 0.22) !important;
+      }
+    }
+
+    /* ── Diseño curricular + Contenidos centrales en 2 columnas ── */
+    .curriculum-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+      margin-top: 32px;
+    }
+    .curriculum-columns:first-of-type {
+      margin-top: 0;
+    }
+    .curriculum-columns h3 {
+      margin-top: 0;
+    }
+    .curriculum-columns p,
+    .curriculum-columns li {
+      line-height: 1.7;
+      margin: 0;
+      padding: 4px 0 !important;
+    }
+    @media (max-width: 768px) {
+      .curriculum-columns {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ── Quitar tildes amarillos de las listas ── */
+    .contenedor-propuesta ul li {
+      list-style: none;
+      padding: 4px 0;
+    }
+    .contenedor-propuesta ul li::before {
+      content: none !important;
+    }
+
+    /* ── Galería de programación ── */
+    .work-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin: 18px 0 6px;
+    }
+    .work-gallery figure {
+      margin: 0;
+      background: rgb(6, 26, 52);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+      border: 1px solid rgba(117, 207, 239, 0.35);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .work-gallery figure:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+    }
+    .work-gallery img {
+      display: block;
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+    }
+    .work-gallery .img-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 210px;
+      background: linear-gradient(135deg, rgba(117, 207, 239, 0.12) 0%, rgba(117, 207, 239, 0.04) 100%);
+      color: rgba(255, 255, 255, 0.35);
+      font-size: 0.85rem;
+    }
+    .work-gallery figcaption {
+      padding: 10px 14px;
+      color: #fff;
+      font-size: 0.92rem;
+      text-align: center;
+    }
+    @media (max-width: 480px) {
+      .work-gallery img,
+      .work-gallery .img-placeholder { height: 180px; }
+    }
+
+    </style>
+</head>
+<body>
+  <header>
+    <div class="container header-container">
+      <img src="Assets/tecnica3.png" alt="Logo del colegio" class="logo">
+      <h1>E.E.S.T N°3 "Islas Malvinas"</h1>
+      <button class="nav-toggle" type="button" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span><span></span></button>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">Inicio</a></li>
+          <li class="nav-dropdown">
+            <button class="dropdown-toggle" type="button" aria-expanded="false">Especialidades</button>
+            <ul class="dropdown-menu">
+              <li><a href="informatica.html">Programación</a></li>
+              <li><a href="construcciones.html">Construcciones</a></li>
+              <li><a href="turismo.html">Turismo</a></li>
+            </ul>
+          </li>
+          <li><a href="galeria.html">Galería</a></li>
+          <li><a href="noticias.html">Noticias</a></li>
+          <li><a href="CONTACTO.HTML">Contacto</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="contenedor-propuesta">
+    <h2>Técnico en Programación</h2>
+
+    <div class="curriculum-columns">
+      <div>
+        <h3>Una mirada al diseño curricular</h3>
+        <p>La tecnicatura en <strong>Programación</strong> orienta la formación hacia el análisis de problemas, el diseño de soluciones algorítmicas, la construcción de software, el trabajo con bases de datos y la integración de aplicaciones en distintos entornos. La propuesta combina teoría, práctica de laboratorio y proyectos donde el estudiante aprende a documentar, probar, corregir y presentar sistemas funcionales.</p>
+      </div>
+      <div>
+        <h3>Contenidos centrales</h3>
+        <ul>
+          <li>Resolución de problemas mediante algoritmos y estructuras de datos.</li>
+          <li>Programación estructurada, orientada a objetos y desarrollo de aplicaciones.</li>
+          <li>Diseño, consulta y administración básica de bases de datos.</li>
+          <li>Desarrollo web, interfaces, servicios y nociones de despliegue.</li>
+          <li>Sistemas operativos, redes, seguridad y documentación técnica.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="curriculum-columns">
+      <div>
+        <h3>Perfil del egresado</h3>
+        <p>El egresado puede participar activamente en equipos de desarrollo de software, relevar y analizar las necesidades de los usuarios, construir programas y aplicaciones funcionales, mantener y actualizar sistemas existentes, trabajar con bases de datos y colaborar en la puesta en marcha de soluciones informáticas completas. Está capacitado también para documentar procesos, realizar pruebas de calidad, dar soporte técnico y adaptarse a distintos lenguajes, entornos y metodologías de trabajo propias del área. Además, cuenta con una base sólida de conocimientos que le permite continuar estudios superiores en áreas de software, sistemas, datos o tecnologías de la información.</p>
+      </div>
+      <div>
+        <h3>Salida laboral posible</h3>
+        <ul>
+          <li>Desarrollador junior de aplicaciones web.</li>
+          <li>Asistente en análisis, documentación y prueba de software.</li>
+          <li>Operador o auxiliar en gestión de bases de datos.</li>
+          <li>Soporte técnico orientado a sistemas, redes y aplicaciones.</li>
+          <li>Participación en emprendimientos tecnológicos o proyectos freelance.</li>
+          <li>Continuidad académica en programación, ingeniería, sistemas, ciberseguridad o ciencia de datos.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="curriculum-columns">
+      <div>
+        <h3>Materias y espacios destacados</h3>
+        <ul>
+          <li>Bases de Datos</li>
+          <li>Desarrollo Web</li>
+          <li>Redes Informáticas</li>
+          <li>Emprendimientos Productivos y Desarrollo Local</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Modalidad</h3>
+        <p><strong>Modalidad:</strong> Presencial <br><strong>Duración:</strong> 7 años <br><strong>Título:</strong> Técnico en Programación</p>
+      </div>
+    </div>
+
+    <h3>Galería de proyectos y prácticas</h3>
+    <div class="work-gallery">
+      <figure>
+        <img src="Assets/informatica-codeo-01.jpeg" alt="Alumno trabajando en HTML5 desde Visual Studio Code">
+        <figcaption>Proyecto escolar: Pagina de la escuela</figcaption>
+      </figure>
+      <figure>
+      <img src="Assets/informatica-codeo-01.jpeg" alt="Alumno trabajando con Claude al programar">
+        <figcaption>Manejo profecionalizado de la IA al programar</figcaption>
+      </figure>
+      <figure>
+        <img src="Assets/Armado-de-cableados 1.jpg" alt="Equipos de sala 1">
+        <figcaption>Vista general de los equipos de sala 1</figcaption>
+      </figure>
+      <figure>
+      <img src="Assets/Armado-de-cableados 1.jpg" alt="">
+        <figcaption>Texto de ejemplo para la imagen 4</figcaption>
+      </figure>
+      <figure>
+      <img src="Assets/Armado-de-cableados 2.jpg" alt="">
+        <figcaption>Texto de ejemplo para la imagen 5</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 E.E.S.T N°3 "Islas Malvinas" - Remedios de Escalada, Lanús</p>
+    <p><em>"Enseñamos profesiones, inspiramos personas."</em></p>
+    <p class="footer-credit">Hecha con <span class="heart">♥</span> por los cursos de informática 2025-actualidad</p>
+  </footer>
+
+  <script src="ui.js"></script>
+</body>
+</html>

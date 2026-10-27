@@ -1,12 +1,14 @@
 {
-  "name": "paginadonkeke",
+  "name": "test",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "publish": "wrangler publish",
-    "dev": "wrangler dev"
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "publish": "wrangler deploy"
   },
   "devDependencies": {
-    "wrangler": "^3.5.0"
+    "wrangler": "^4.0.0"
   }
 }

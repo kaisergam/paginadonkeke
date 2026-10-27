@@ -1,10 +1,9 @@
-name = "paginadonkeke"
+name = "tecnica3"
 main = "index.js"
 compatibility_date = "2026-05-26"
-account_id = "dc13b2cb0be44bd64e418965f37b4019"
+account_id = "e636ceb62148fbaac9f75b50a15f0101"
 workers_dev = true
 
-[site]
-bucket = "."
-include = ["index.html", "disenopancartaSGB.css", "pancartaSGB.js"]
-exclude = ["wrangler.toml", "package.json", "README-deploy.md", "index.js", "_worker.js"]
+[assets]
+directory = "Public"
+binding = "ASSETS"

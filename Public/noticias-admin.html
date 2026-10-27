@@ -1,0 +1,802 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar noticias - E.E.S.T N°3 Islas Malvinas</title>
+    <link rel="stylesheet" href="Styles/hi.css">
+    <style>
+        body.news-admin-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.news-admin-page main {
+            flex: 1;
+            display: block;
+            width: 100%;
+            max-width: none;
+            margin: 0;
+            padding: 22px 0 10px;
+        }
+
+        .admin-shell {
+            width: min(calc(100vw - 24px), 1780px);
+            margin: 0 auto 24px;
+            padding: 18px;
+            background: rgba(245, 248, 252, 0.78);
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            border-radius: 12px;
+            box-shadow: 0 16px 36px rgba(10, 24, 40, 0.16);
+            backdrop-filter: blur(10px);
+        }
+
+        .admin-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 18px;
+            margin-bottom: 14px;
+        }
+
+        .admin-topbar h2 {
+            margin: 0;
+            font-size: clamp(1.75rem, 3vw, 2.45rem);
+        }
+
+        .admin-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .admin-button {
+            border: 0;
+            border-radius: 999px;
+            padding: 10px 15px;
+            background: var(--accent-blue);
+            color: #fff;
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .admin-button:hover {
+            transform: translateY(-1px);
+            background: var(--accent-gold);
+            color: #132338;
+        }
+
+        .admin-button.secondary {
+            background: #e7edf3;
+            color: var(--accent-blue);
+        }
+
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .admin-list.is-dimmed {
+            filter: blur(4px) saturate(0.6) brightness(0.85);
+            pointer-events: none;
+            user-select: none;
+            transition: filter 0.32s ease;
+        }
+
+        .admin-list {
+            transition: filter 0.32s ease;
+        }
+
+        .form-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 24px;
+            background: rgba(8, 20, 34, 0);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.32s ease, background 0.32s ease, visibility 0.32s ease;
+        }
+
+        .form-overlay.is-open {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            background: rgba(8, 20, 34, 0.45);
+        }
+
+        .form-overlay .admin-form {
+            width: min(100%, 520px);
+            max-height: calc(100vh - 48px);
+            overflow-y: auto;
+            transform: translateX(60px);
+            opacity: 0;
+            transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.36s ease;
+        }
+
+        .form-overlay.is-open .admin-form {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .form-close {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            border: 0;
+            border-radius: 999px;
+            width: 32px;
+            height: 32px;
+            background: #e7edf3;
+            color: var(--accent-blue);
+            font-weight: 800;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .form-close:hover {
+            background: var(--accent-gold);
+            color: #132338;
+        }
+
+        .admin-list,
+        .admin-form {
+            position: relative;
+            border: 10px double var(--accent-blue);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.94);
+            box-shadow: 0 20px 45px rgba(10, 24, 40, 0.2);
+        }
+
+        .admin-list {
+            overflow: hidden;
+        }
+
+        .admin-form {
+            overflow-x: hidden;
+            overflow-y: auto !important;
+        }
+
+        .admin-list-header,
+        .admin-form-header {
+            padding: 14px 18px;
+            border-bottom: 6px double rgba(16, 59, 102, 0.5);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(240, 245, 250, 0.92));
+        }
+
+        .admin-list-header h3,
+        .admin-form-header h3 {
+            margin: 0;
+            color: var(--accent-blue);
+        }
+
+        #adminList {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .news-admin-item {
+            display: grid;
+            grid-template-rows: 135px auto;
+            gap: 0;
+            min-height: 310px;
+            padding: 0;
+            border-right: 6px double rgba(16, 59, 102, 0.72);
+            border-bottom: 6px double rgba(16, 59, 102, 0.72);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(240, 245, 250, 0.92));
+            transition: transform 0.24s ease, box-shadow 0.24s ease, background 0.24s ease;
+        }
+
+        .news-admin-item:nth-child(2n) {
+            border-right: 0;
+        }
+
+        .news-admin-item:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(250, 239, 210, 0.92));
+            box-shadow: 0 14px 28px rgba(10, 24, 40, 0.16);
+            z-index: 1;
+        }
+
+        .news-admin-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0;
+            background: rgba(16, 59, 102, 0.08);
+        }
+
+        .news-admin-item > div {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 14px;
+        }
+
+        .news-admin-item h4 {
+            margin: 0 0 6px;
+            color: var(--accent-blue);
+            font-size: 1rem;
+            line-height: 1.25;
+        }
+
+        .news-admin-item p {
+            margin: 0 0 10px;
+            display: -webkit-box;
+            overflow: hidden;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 9px;
+            border-radius: 999px;
+            background: rgba(56, 142, 60, 0.12);
+            color: #286b2d;
+            font-size: 0.8rem;
+            font-weight: 800;
+        }
+
+        .status.is-hidden {
+            background: rgba(180, 48, 38, 0.1);
+            color: #9c2c24;
+        }
+
+        .item-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .item-actions button {
+            border: 0;
+            border-radius: 999px;
+            padding: 8px 10px;
+            background: #e7edf3;
+            color: var(--accent-blue);
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .item-actions .danger {
+            background: #f5d7d3;
+            color: #9c2c24;
+        }
+
+        .admin-form form {
+            display: grid;
+            gap: 12px;
+            padding: 18px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(240, 245, 250, 0.86));
+        }
+
+        .field {
+            display: grid;
+            gap: 6px;
+        }
+
+        .field label {
+            color: var(--accent-blue);
+            font-weight: 800;
+        }
+
+        .field input,
+        .field textarea {
+            width: 100%;
+            padding: 10px 11px;
+            border: 3px solid rgba(16, 59, 102, 0.2);
+            border-radius: 10px;
+            font: inherit;
+        }
+
+        .field textarea {
+            min-height: 160px;
+            resize: vertical;
+        }
+
+        .file-upload {
+            display: grid;
+            gap: 6px;
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            opacity: 0;
+        }
+
+        .file-upload-button {
+            border: 3px solid rgba(16, 59, 102, 0.2);
+            border-radius: 10px;
+            padding: 10px 11px;
+            background: #e7edf3;
+            color: var(--accent-blue);
+            font-weight: 800;
+            font: inherit;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .file-upload-button:hover {
+            background: var(--accent-blue);
+            color: #fff;
+        }
+
+        .file-upload-name {
+            color: var(--ink-soft);
+            font-size: 0.85rem;
+        }
+
+        .checkbox-field {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-blue);
+            font-weight: 800;
+            font-size: 0.88rem;
+            white-space: nowrap;
+        }
+
+        .checkbox-field input {
+            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-buttons button {
+            flex: 1;
+        }
+
+        .empty-admin {
+            padding: 24px 20px;
+            color: var(--ink-soft);
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 900px) {
+            body.news-admin-page main {
+                padding: 18px 0 8px;
+            }
+
+            .admin-shell {
+                width: var(--content-width-mobile);
+                padding: 14px;
+            }
+
+            .admin-topbar {
+                display: block;
+            }
+
+            .admin-actions {
+                justify-content: flex-start;
+                margin-top: 12px;
+            }
+
+            .admin-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .form-overlay {
+                justify-content: center;
+                padding: 16px;
+            }
+
+            .form-overlay .admin-form {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 560px) {
+            #adminList {
+                grid-template-columns: 1fr;
+            }
+
+            .news-admin-item {
+                grid-template-columns: 1fr;
+                grid-template-rows: 190px auto;
+                border-right: 0;
+            }
+
+            .news-admin-item img {
+                width: 100%;
+                height: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="news-admin-page">
+    <header>
+        <div class="container header-container">
+            <img src="Assets/tecnica3.png" alt="Logo del colegio" class="logo">
+            <h1>E.E.S.T N°3 "Islas Malvinas"</h1>
+            <button class="nav-toggle" type="button" aria-label="Abrir menú" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li class="nav-dropdown">
+                        <button class="dropdown-toggle" type="button" aria-expanded="false">Especialidades</button>
+                        <ul class="dropdown-menu">
+                            <li><a href="informatica.html">Programación</a></li>
+                            <li><a href="construcciones.html">Construcciones</a></li>
+                            <li><a href="turismo.html">Turismo</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="galeria.html">Galería</a></li>
+                    <li><a href="noticias.html" class="is-active">Noticias</a></li>
+                    <li><a href="CONTACTO.HTML">Contacto</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="admin-shell no-hover">
+            <div class="admin-topbar">
+                <div>
+                    <h2>Administrar noticias</h2>
+                    <p>Agregá, editá, ocultá o eliminá publicaciones de la página pública.</p>
+                </div>
+                <div class="admin-actions">
+                    <a class="admin-button secondary" href="noticias.html">Ver publicadas</a>
+                    <button class="admin-button" id="newPost" type="button">Nueva publicación</button>
+                    <button class="admin-button secondary" id="logout" type="button">Cerrar sesión</button>
+                </div>
+            </div>
+
+            <div class="admin-layout">
+                <div class="admin-list" id="adminListPanel">
+                    <div class="admin-list-header">
+                        <h3>Publicaciones cargadas</h3>
+                    </div>
+                    <div id="adminList"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="form-overlay" id="formOverlay">
+        <div class="admin-form">
+            <button class="form-close" id="closeForm" type="button" aria-label="Cerrar">✕</button>
+            <div class="admin-form-header">
+                <h3 id="formTitle">Nueva publicación</h3>
+            </div>
+            <form id="postForm">
+                <input id="postId" type="hidden">
+                <div class="field">
+                    <label for="postTitle">Título</label>
+                    <input id="postTitle" type="text" required>
+                </div>
+                <div class="field">
+                    <label for="postDate">Fecha</label>
+                    <input id="postDate" type="date" required>
+                </div>
+                <div class="field">
+                    <label for="postBody">Texto</label>
+                    <textarea id="postBody" required></textarea>
+                </div>
+                <div class="field">
+                    <label for="postImage">Imagen</label>
+                    <div class="file-upload">
+                        <label class="file-upload-button" for="postImage">Adjuntar Imagen</label>
+                        <input id="postImage" type="file" accept="image/*">
+                        <span class="file-upload-name" id="postImageName">Ningún archivo seleccionado</span>
+                    </div>
+                </div>
+                <label class="checkbox-field">
+                    Visible en noticias publicadas
+                    <input id="postPublished" type="checkbox" checked>
+                </label>
+                <div class="form-buttons">
+                    <button class="admin-button" type="submit">Guardar</button>
+                    <button class="admin-button secondary" id="resetForm" type="button">Limpiar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 E.E.S.T N°3 "Islas Malvinas" - Remedios de Escalada, Lanús</p>
+        <p><em>"Enseñamos profesiones, inspiramos personas."</em></p>
+        <p class="footer-credit">Hecha con <span class="heart">♥</span> por los cursos de informática 2025-actualidad</p>
+    </footer>
+
+    <script src="ui.js"></script>
+    <script>
+        const NEWS_KEY = 'eest3Noticias';
+        const SESSION_KEY = 'eest3NoticiasAdmin';
+
+        const defaultNews = [
+            {
+                id: 'programacion',
+                title: 'Taller de Programación',
+                date: '2026-06-23',
+                body: 'Los estudiantes desarrollan proyectos utilizando HTML, CSS y JavaScript, creando interfaces modernas y resolviendo problemas mediante programación.',
+                image: 'Assets/imagen1.jpg',
+                published: true
+            },
+            {
+                id: 'practicas',
+                title: 'Prácticas Profesionalizantes',
+                date: '2026-06-23',
+                body: 'Las prácticas permiten aplicar conocimientos en situaciones reales, fortaleciendo habilidades técnicas, responsabilidad y trabajo en equipo.',
+                image: 'Assets/imagen2.jpg',
+                published: true
+            },
+            {
+                id: 'laboratorio',
+                title: 'Laboratorio y Proyectos',
+                date: '2026-06-23',
+                body: 'En los espacios técnicos se integran teoría y práctica a través de proyectos institucionales, científicos y comunitarios.',
+                image: 'Assets/imagen3.jpg',
+                published: true
+            },
+            {
+                id: 'institucional',
+                title: 'Comunidad Islas Malvinas',
+                date: '2026-06-23',
+                body: 'La escuela impulsa actividades que fomentan creatividad, innovación y compromiso con la comunidad educativa.',
+                image: 'Assets/Malvinas.jpg',
+                published: true
+            },
+            {
+                id: 'construcciones',
+                title: 'Taller de Construcciones',
+                date: '2026-06-23',
+                body: 'Los estudiantes de la especialidad de Construcciones trabajan en proyectos prácticos, aprendiendo técnicas de obra, planificación y trabajo seguro en taller.',
+                image: 'Assets/imagen4.jpg',
+                published: true
+            },
+            {
+                id: 'turismo',
+                title: 'Especialidad en Turismo',
+                date: '2026-06-23',
+                body: 'Los alumnos de Turismo desarrollan competencias en planificación de viajes, atención al visitante y promoción del patrimonio cultural y natural de la región.',
+                image: 'Assets/imagen5.jpg',
+                published: true
+            }
+        ];
+
+        if (sessionStorage.getItem(SESSION_KEY) !== 'true') {
+            window.location.replace('noticias.html');
+        }
+
+        const readNews = () => {
+            try {
+                const stored = JSON.parse(localStorage.getItem(NEWS_KEY));
+                return Array.isArray(stored) ? stored : defaultNews;
+            } catch {
+                return defaultNews;
+            }
+        };
+
+        const saveNews = (items) => {
+            localStorage.setItem(NEWS_KEY, JSON.stringify(items));
+        };
+
+        const escapeHtml = (value) => String(value || '').replace(/[&<>"']/g, (char) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        }[char]));
+
+        const adminList = document.getElementById('adminList');
+        const postForm = document.getElementById('postForm');
+        const formTitle = document.getElementById('formTitle');
+        const postId = document.getElementById('postId');
+        const postTitle = document.getElementById('postTitle');
+        const postDate = document.getElementById('postDate');
+        const postBody = document.getElementById('postBody');
+        const postImage = document.getElementById('postImage');
+        const postImageName = document.getElementById('postImageName');
+        const postPublished = document.getElementById('postPublished');
+
+        const today = () => new Date().toISOString().slice(0, 10);
+
+        const resetEditor = () => {
+            postForm.reset();
+            postId.value = '';
+            postDate.value = today();
+            postPublished.checked = true;
+            postImageName.textContent = 'Ningún archivo seleccionado';
+            formTitle.textContent = 'Nueva publicación';
+        };
+
+        const renderAdmin = () => {
+            const news = readNews();
+
+            if (!news.length) {
+                adminList.innerHTML = '<div class="empty-admin">No hay publicaciones cargadas.</div>';
+                return;
+            }
+
+            adminList.innerHTML = news.map((item) => `
+                <article class="news-admin-item">
+                    <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}">
+                    <div>
+                        <h4>${escapeHtml(item.title)}</h4>
+                        <span class="status ${item.published ? '' : 'is-hidden'}">${item.published ? 'Publicada' : 'Oculta'}</span>
+                        <p>${escapeHtml(item.body)}</p>
+                        <div class="item-actions">
+                            <button type="button" data-action="edit" data-id="${escapeHtml(item.id)}">Editar</button>
+                            <button type="button" data-action="toggle" data-id="${escapeHtml(item.id)}">${item.published ? 'Ocultar' : 'Publicar'}</button>
+                            <button class="danger" type="button" data-action="delete" data-id="${escapeHtml(item.id)}">Eliminar</button>
+                        </div>
+                    </div>
+                </article>
+            `).join('');
+        };
+
+        const getImageValue = () => new Promise((resolve) => {
+            const file = postImage.files && postImage.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.readAsDataURL(file);
+                return;
+            }
+
+            resolve('Assets/tecnica3.png');
+        });
+
+        postImage.addEventListener('change', () => {
+            const file = postImage.files && postImage.files[0];
+            postImageName.textContent = file ? file.name : 'Ningún archivo seleccionado';
+        });
+
+        postForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const news = readNews();
+            const image = await getImageValue();
+            const id = postId.value || `noticia-${Date.now()}`;
+            const updated = {
+                id,
+                title: postTitle.value.trim(),
+                date: postDate.value,
+                body: postBody.value.trim(),
+                image,
+                published: postPublished.checked
+            };
+            const index = news.findIndex((item) => item.id === id);
+
+            if (index >= 0) {
+                news[index] = updated;
+            } else {
+                news.unshift(updated);
+            }
+
+            saveNews(news);
+            resetEditor();
+            renderAdmin();
+            closeForm();
+        });
+
+        adminList.addEventListener('click', (event) => {
+            const button = event.target.closest('button[data-action]');
+            if (!button) return;
+
+            const news = readNews();
+            const id = button.dataset.id;
+            const action = button.dataset.action;
+            const item = news.find((entry) => entry.id === id);
+
+            if (!item) return;
+
+            if (action === 'edit') {
+                postId.value = item.id;
+                postTitle.value = item.title;
+                postDate.value = item.date;
+                postBody.value = item.body;
+                postPublished.checked = item.published;
+                postImage.value = '';
+                postImageName.textContent = 'Ningún archivo seleccionado';
+                formTitle.textContent = 'Editar publicación';
+                openForm();
+            }
+
+            if (action === 'toggle') {
+                item.published = !item.published;
+                saveNews(news);
+                renderAdmin();
+            }
+
+            if (action === 'delete') {
+                saveNews(news.filter((entry) => entry.id !== id));
+                resetEditor();
+                renderAdmin();
+            }
+        });
+
+        const formOverlay = document.getElementById('formOverlay');
+        const adminListPanel = document.getElementById('adminListPanel');
+        const closeFormButton = document.getElementById('closeForm');
+        const adminFormPanel = document.querySelector('.form-overlay .admin-form');
+
+        if (adminFormPanel) {
+            adminFormPanel.addEventListener('wheel', (event) => {
+                const { scrollTop, scrollHeight, clientHeight } = adminFormPanel;
+                const maxScroll = scrollHeight - clientHeight;
+
+                if (maxScroll <= 0) return;
+
+                adminFormPanel.scrollTop = Math.min(
+                    Math.max(scrollTop + event.deltaY, 0),
+                    maxScroll
+                );
+                event.preventDefault();
+            }, { passive: false });
+        }
+
+        const openForm = () => {
+            formOverlay.classList.add('is-open');
+            adminListPanel.classList.add('is-dimmed');
+            document.body.style.overflow = 'hidden';
+
+            if (adminFormPanel) {
+                adminFormPanel.style.setProperty('overflow-y', 'auto', 'important');
+                adminFormPanel.style.setProperty('max-height', 'calc(100vh - 48px)', 'important');
+                adminFormPanel.scrollTop = 0;
+            }
+        };
+
+        const closeForm = () => {
+            formOverlay.classList.remove('is-open');
+            adminListPanel.classList.remove('is-dimmed');
+            document.body.style.overflow = '';
+        };
+
+        document.getElementById('newPost').addEventListener('click', () => {
+            resetEditor();
+            openForm();
+        });
+        document.getElementById('resetForm').addEventListener('click', resetEditor);
+        closeFormButton.addEventListener('click', closeForm);
+        formOverlay.addEventListener('click', (event) => {
+            if (event.target === formOverlay) closeForm();
+        });
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && formOverlay.classList.contains('is-open')) {
+                closeForm();
+            }
+        });
+        document.getElementById('logout').addEventListener('click', () => {
+            sessionStorage.removeItem(SESSION_KEY);
+            window.location.replace('noticias.html');
+        });
+
+        resetEditor();
+        renderAdmin();
+    </script>
+</body>
+</html>

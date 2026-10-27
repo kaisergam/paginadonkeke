@@ -1,0 +1,2 @@
+1-Elimine de la pagina de galeria las imagenes innecesarias porque estaban "rotas" y no se veian
+2-Agreguè una animacion de deslizamiento entre las fotos y haciendo que se vea la silueta de las fotos en cada extremo  

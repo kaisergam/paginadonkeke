@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EEST Nº3 Islas Malvinas</title>
+    <link rel="stylesheet" href="Styles/hi.css">
+  <style>
+    .dropdown-menu { background: linear-gradient(90deg, rgba(6, 26, 52, 0.98) 0%, rgba(21, 72, 121, 0.95) 58%, rgba(47, 140, 184, 0.82) 100%); border-color: rgba(117, 207, 239, 0.4); left: 50%; transform: translateX(-50%) translateY(8px) scale(0.98); transform-origin: top center; }
+    .dropdown-menu li + li { margin-top: 12px; }
+    .dropdown-menu li a { display: block; padding: 8px 16px; color: #fff; }
+    .dropdown-menu li a:hover { background: rgba(117, 207, 239, 0.28); color: #fff; }
+    #propuesta .card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    #propuesta .card h3 {
+      text-align: left;
+      margin: 0;
+      text-align: center;
+      justify-content: center;
+      display: flex;
+      align-items: center;
+    }
+    .nav-dropdown:not(.is-closing):hover .dropdown-menu,
+    .nav-dropdown.is-open .dropdown-menu,
+    .nav-dropdown:not(.is-closing):focus-within .dropdown-menu { transform: translateX(-50%) translateY(0) scale(1); }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    footer { margin-top: auto; }
+  
+
+    /* ── Nav-toggle alignment + footer fix ── */
+    @media (max-width: 768px) {
+      /* Grid de 3 columnas: logo | h1 (crece) | botón hamburguesa
+         Segunda fila: nav ocupa todo el ancho                      */
+      .header-container {
+        display: grid !important;
+        grid-template-columns: auto 1fr auto !important;
+        grid-template-rows: auto auto !important;
+        align-items: center !important;
+        gap: 0 10px !important;
+        padding: 10px 16px !important;
+      }
+      .header-container .logo {
+        grid-column: 1 !important;
+        grid-row: 1 !important;
+        align-self: center !important;
+      }
+      .header-container h1 {
+        grid-column: 2 !important;
+        grid-row: 1 !important;
+        align-self: center !important;
+        margin: 0 !important;
+        font-size: clamp(0.85rem, 4vw, 1.2rem) !important;
+        line-height: 1.2 !important;
+        white-space: normal !important;
+      }
+      .nav-toggle {
+        grid-column: 3 !important;
+        grid-row: 1 !important;
+        align-self: center !important;
+        justify-self: end !important;
+        margin: 0 !important;
+      }
+      .header-container nav {
+        grid-column: 1 / -1 !important;
+        grid-row: 2 !important;
+      }
+    }
+
+    /* Footer: elimina el degradado hacia blanco, fondo azul marino sólido a ambos lados */
+    footer {
+      background: rgb(6, 26, 52) !important;
+      background-image: none !important;
+    }
+
+    /* ── Dropdown mobile fix ── */
+    @media (max-width: 768px) {
+      .dropdown-menu {
+        position: static !important;
+        transform: none !important;
+        left: auto !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        background: linear-gradient(135deg, rgba(6, 26, 52, 0.98) 0%, rgba(21, 72, 121, 0.97) 58%, rgba(47, 140, 184, 0.90) 100%) !important;
+        border: 1px solid rgba(117, 207, 239, 0.35) !important;
+        border-radius: 10px;
+        margin-top: 6px;
+        padding: 10px 0;
+        display: none;
+        width: 100%;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+      }
+      .nav-dropdown.is-open .dropdown-menu {
+        display: block !important;
+      }
+      .dropdown-menu li + li {
+        margin-top: 2px !important;
+      }
+      .dropdown-menu li a {
+        color: #fff !important;
+        padding: 13px 22px !important;
+        font-size: 1rem !important;
+        display: block !important;
+        letter-spacing: 0.01em;
+      }
+      .dropdown-menu li a:hover {
+        background: rgba(117, 207, 239, 0.22) !important;
+      }
+    }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container header-container">
+            <img src="Assets/tecnica3.png" alt="Logo del colegio" class="logo">
+            <h1>E.E.S.T Nº3 "Islas Malvinas"</h1>
+            <button class="nav-toggle" type="button" aria-label="Abrir menú" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li class="nav-dropdown">
+                        <button class="dropdown-toggle" type="button" aria-expanded="false">Especialidades</button>
+                        <ul class="dropdown-menu">
+                            <li><a href="informatica.html">Programación</a></li>
+                            <li><a href="construcciones.html">Construcciones</a></li>
+                            <li><a href="turismo.html">Turismo</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="galeria.html">Galería</a></li>
+                    <li><a href="noticias.html">Noticias</a></li>
+                    <li><a href="CONTACTO.HTML">Contacto</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    
+    <main>
+        <!-- INICIO -->
+        <section id="inicio" class="section">
+            <div class="container">
+                <h2>Bienvenidos a la E.E.S.T Nº3 "Islas Malvinas"</h2>
+                <div class="separador"></div>
+                <p>Bienvenidos a la E.E.S.T Nº3 "Islas Malvinas". Somos una institución pública comprometida con la formación integral de nuestros estudiantes, ubicada en Remedios de Escalada, partido de Lanús. Desde hace años, trabajamos con dedicación y orgullo para ofrecer una educación técnica de excelencia, que combina la enseñanza teórica con la práctica, y que prepara a nuestros jóvenes para afrontar los desafíos del presente y del futuro con compromiso, creatividad y responsabilidad.</p>
+                <p>En nuestra escuela formamos personas antes que profesionales. Buscamos que cada estudiante descubra sus talentos, desarrolle su pensamiento crítico y adquiera las herramientas necesarias para desenvolverse tanto en el ámbito académico como en el mundo del trabajo. Promovemos el trabajo en equipo, el respeto, la solidaridad y la innovación como pilares fundamentales de la educación técnica.</p>
+                <p>La EEST Nº3 es mucho más que un edificio con talleres: es una comunidad educativa viva, donde cada proyecto, cada clase y cada experiencia contribuyen a formar ciudadanos responsables y técnicos competentes. Contamos con docentes comprometidos, equipamiento en constante actualización y una fuerte conexión con el entorno social y productivo de nuestra región.</p>
+                <p>Creemos en una educación que transforma, que abre puertas, que inspira y que da oportunidades reales. Por eso, seguimos apostando al conocimiento, al esfuerzo y a los valores humanos que hacen grande a nuestra escuela.</p>
+                <blockquote>"Educando con compromiso, construyendo futuro."</blockquote>
+            </div>
+        </section>
+
+        <section id="propuesta" class="section">
+            <div class="container">
+                <h2>Nuestra Propuesta Educativa</h2>
+                <div class="separador"></div>
+                <div class="card-container">
+                    <div class="card" onclick="location.href='informatica.html'">
+                        <h3>Técnico en Programación</h3>
+                        <p>Desarrollo de software, bases de datos, aplicaciones y proyectos digitales.</p>
+                    </div>
+                    <div class="card" onclick="location.href='construcciones.html'">
+                        <h3>Maestro Mayor de Obras</h3>
+                        <p>Diseño, planificación y dirección técnica de proyectos edilicios.</p>
+                    </div>
+                    <div class="card" onclick="location.href='turismo.html'">
+                        <h3>Técnico en Servicios Turísticos</h3>
+                        <p>Gestión turística, patrimonio cultural y atención al viajero.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 E.E.S.T Nº3 "Islas Malvinas" "” Remedios de Escalada, Lanús</p>
+        <p><em>"Enseñamos profesiones, inspiramos personas."</em></p>
+        <p class="footer-credit">Hecha con <span class="heart">♥</span> por los cursos de informática 2025-actualidad</p>
+    </footer>
+
+    <!-- ðŸ”¹ SCRIPT DEL CARRUSEL -->
+    <script>
+        let indice = 0;
+        const slides = document.querySelectorAll('.slide');
+
+        function mostrarSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            indice = (n + slides.length) % slides.length;
+            slides[indice].classList.add('active');
+        }
+
+        function moverSlide(n) {
+            mostrarSlide(indice + n);
+        }
+
+        // Cambio automático cada 5 segundos
+        setInterval(() => moverSlide(1), 5000);
+    </script>
+
+    <script src="ui.js"></script>
+</body>
+</html>

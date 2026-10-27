@@ -1,0 +1,288 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galería - EEST N°3 Islas Malvinas</title>
+  <link rel="stylesheet" href="Styles/hi.css">
+  <style>
+    .dropdown-menu { background: linear-gradient(90deg, rgba(6, 26, 52, 0.98) 0%, rgba(21, 72, 121, 0.95) 58%, rgba(47, 140, 184, 0.82) 100%); border-color: rgba(117, 207, 239, 0.4); left: 50%; transform: translateX(-50%) translateY(8px) scale(0.98); transform-origin: top center; }
+    .dropdown-menu li + li { margin-top: 12px; }
+    .dropdown-menu li a { display: block; padding: 8px 16px; color: #fff; }
+    .dropdown-menu li a:hover { background: rgba(117, 207, 239, 0.28); color: #fff; }
+    .nav-dropdown:not(.is-closing):hover .dropdown-menu,
+    .nav-dropdown.is-open .dropdown-menu,
+    .nav-dropdown:not(.is-closing):focus-within .dropdown-menu { transform: translateX(-50%) translateY(0) scale(1); }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    footer { margin-top: auto; }
+  
+
+    /* ── Nav-toggle alignment + footer fix ── */
+    @media (max-width: 768px) {
+      /* Grid de 3 columnas: logo | h1 (crece) | botón hamburguesa
+         Segunda fila: nav ocupa todo el ancho                      */
+      .header-container {
+        display: grid !important;
+        grid-template-columns: auto 1fr auto !important;
+        grid-template-rows: auto auto !important;
+        align-items: center !important;
+        gap: 0 10px !important;
+        padding: 10px 16px !important;
+      }
+      .header-container .logo {
+        grid-column: 1 !important;
+        grid-row: 1 !important;
+        align-self: center !important;
+      }
+      .header-container h1 {
+        grid-column: 2 !important;
+        grid-row: 1 !important;
+        align-self: center !important;
+        margin: 0 !important;
+        font-size: clamp(0.85rem, 4vw, 1.2rem) !important;
+        line-height: 1.2 !important;
+        white-space: normal !important;
+      }
+      .nav-toggle {
+        grid-column: 3 !important;
+        grid-row: 1 !important;
+        align-self: center !important;
+        justify-self: end !important;
+        margin: 0 !important;
+      }
+      .header-container nav {
+        grid-column: 1 / -1 !important;
+        grid-row: 2 !important;
+      }
+    }
+
+    /* Footer: elimina el degradado hacia blanco, fondo azul marino sólido a ambos lados */
+    footer {
+      background: rgb(6, 26, 52) !important;
+      background-image: none !important;
+    }
+
+    /* ── Dropdown mobile fix ── */
+    @media (max-width: 768px) {
+      .dropdown-menu {
+        position: static !important;
+        transform: none !important;
+        left: auto !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        background: linear-gradient(135deg, rgba(6, 26, 52, 0.98) 0%, rgba(21, 72, 121, 0.97) 58%, rgba(47, 140, 184, 0.90) 100%) !important;
+        border: 1px solid rgba(117, 207, 239, 0.35) !important;
+        border-radius: 10px;
+        margin-top: 6px;
+        padding: 10px 0;
+        display: none;
+        width: 100%;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+      }
+      .nav-dropdown.is-open .dropdown-menu {
+        display: block !important;
+      }
+      .dropdown-menu li + li {
+        margin-top: 2px !important;
+      }
+      .dropdown-menu li a {
+        color: #fff !important;
+        padding: 13px 22px !important;
+        font-size: 1rem !important;
+        display: block !important;
+        letter-spacing: 0.01em;
+      }
+      .dropdown-menu li a:hover {
+        background: rgba(117, 207, 239, 0.22) !important;
+      }
+    }
+
+    /* Ocultar la fila de miniaturas: solo queremos la foto grande + flechas prev/next.
+       Los botones siguen en el HTML (ocultos) porque el script arma la lista de fotos
+       leyendo de ahí; así no hay que mantener un array de imágenes aparte en ui.js. */
+    .gallery-thumbs {
+      display: none;
+    }
+
+    /* Tamaño del panel de la galería en computadora: se limita el ancho máximo
+       para que no ocupe toda la pantalla, pero cada imagen conserva su propia
+       proporción natural (sin recorte, sin estirar). */
+    .gallery-frame {
+      max-width: 1250px !important;
+      margin: 0 auto !important;
+      min-height: 0 !important;
+      height: auto !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      position: relative !important;
+      overflow: hidden !important;
+      padding: 12px 0;
+    }
+    .gallery-frame img {
+      height: auto !important;
+      width: auto !important;
+      max-width: 100% !important;
+      max-height: 62vh !important;
+      object-fit: contain !important;
+      border-radius: 14px;
+      box-shadow: 0 24px 54px rgba(4, 18, 39, 0.24);
+      pointer-events: none;
+      user-select: none;
+    }
+    .gallery-frame::after {
+      display: none !important;
+    }
+
+    /* ── Carrusel tipo "coverflow": foto anterior y siguiente asomando a los costados ── */
+    .gallery-track {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+      will-change: transform;
+    }
+    .gallery-slide {
+      flex: 0 0 var(--slide-w, 620px);
+      width: var(--slide-w, 620px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      padding: 0 14px;
+      transform: scale(0.72);
+      filter: brightness(0.4) saturate(0.85);
+      opacity: 0.85;
+      transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1), filter 0.55s ease, opacity 0.55s ease;
+    }
+    .gallery-slide.is-active {
+      transform: scale(1);
+      filter: brightness(1) saturate(1);
+      opacity: 1;
+      z-index: 2;
+    }
+    @media (max-width: 640px) {
+      .gallery-slide {
+        padding: 0 6px;
+      }
+    }
+    .gallery-copy .section-kicker {
+      display: none !important;
+    }
+    .gallery-caption strong {
+      display: none !important;
+    }
+
+    /* Flechas afuera del recuadro de la imagen, sobre el fondo blanco */
+    .gallery-viewer-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+    }
+    .gallery-viewer-row .gallery-frame {
+      margin: 0 !important;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .gallery-viewer-row .gallery-control {
+      position: static !important;
+      transform: none !important;
+      flex: 0 0 auto;
+      background: rgba(16, 59, 102, 0.08);
+      color: var(--accent-blue);
+      border: 1px solid rgba(16, 59, 102, 0.18);
+      box-shadow: none;
+    }
+    .gallery-viewer-row .gallery-control:hover {
+      background: rgba(202, 162, 74, 0.85);
+      color: #fff;
+      transform: none !important;
+    }
+    @media (max-width: 640px) {
+      .gallery-viewer-row {
+        gap: 8px;
+      }
+      .gallery-viewer-row .gallery-control {
+        width: 34px;
+        height: 34px;
+        font-size: 1.4rem;
+      }
+    }
+    </style>
+</head>
+<body>
+  <header>
+    <div class="container header-container">
+      <img src="Assets/tecnica3.png" alt="Logo del colegio" class="logo">
+      <h1>E.E.S.T N°3 "Islas Malvinas"</h1>
+      <button class="nav-toggle" type="button" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span><span></span></button>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">Inicio</a></li>
+          <li class="nav-dropdown">
+            <button class="dropdown-toggle" type="button" aria-expanded="false">Especialidades</button>
+            <ul class="dropdown-menu">
+              <li><a href="informatica.html">Programación</a></li>
+              <li><a href="construcciones.html">Construcciones</a></li>
+              <li><a href="turismo.html">Turismo</a></li>
+            </ul>
+          </li>
+          <li><a href="galeria.html">Galería</a></li>
+          <li><a href="noticias.html">Noticias</a></li>
+          <li><a href="CONTACTO.HTML">Contacto</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section id="galeria" class="section no-hover gallery-section">
+    <div class="container gallery-shell">
+      <div class="gallery-copy">
+        <p class="section-kicker">Vida escolar</p>
+        <h2>Galería</h2>
+      </div>
+
+      <div class="gallery-stage" data-gallery>
+        <div class="gallery-viewer-row">
+          <button class="gallery-control gallery-prev" type="button" aria-label="Imagen anterior" data-gallery-prev>‹</button>
+          <div class="gallery-frame" data-gallery-frame>
+            <div class="gallery-track" data-gallery-track></div>
+            <div class="gallery-caption">
+              <span data-gallery-count>01 / 10</span>
+              <strong data-gallery-title>Vida institucional</strong>
+            </div>
+          </div>
+          <button class="gallery-control gallery-next" type="button" aria-label="Imagen siguiente" data-gallery-next>›</button>
+        </div>
+
+        <div class="gallery-toolbar">
+          <div class="gallery-progress" aria-hidden="true"><span data-gallery-progress></span></div>
+          <div class="gallery-thumbs" aria-label="Seleccionar imagen">
+            <button class="gallery-thumb is-active" type="button" data-gallery-thumb="0" aria-label="Ver imagen 1" data-gallery-title="Vida institucional"><img src="Assets/WhatsApp Image 2026-08-11 at 7.06.18 PM.jpeg" alt="Imagen de la vida escolar 1"></button>
+            <button class="gallery-thumb" type="button" data-gallery-thumb="1" aria-label="Ver imagen 2" data-gallery-title="Identidad Malvinas"><img src="Assets/WhatsApp Image 2026-08-11 at 7.06.33 PM.jpeg" alt="Imagen de la vida escolar 2"></button>
+            <button class="gallery-thumb" type="button" data-gallery-thumb="2" aria-label="Ver imagen 3" data-gallery-title="Aulas y talleres"><img src="Assets/WhatsApp Image 2026-08-11 at 7.06.34 PM.jpeg" alt="Imagen de la vida escolar 3"></button>
+            <button class="gallery-thumb" type="button" data-gallery-thumb="3" aria-label="Ver imagen 4" data-gallery-title="Vida institucional"><img src="Assets/WhatsApp Image 2026-08-11 at 7.06.56 PM (1).jpeg" alt="Imagen de la vida escolar 4"></button>
+            <button class="gallery-thumb" type="button" data-gallery-thumb="4" aria-label="Ver imagen 5" data-gallery-title="Nuestra escuela"><img src="Assets/WhatsApp Image 2026-08-11 at 7.06.56 PM.jpeg" alt="Imagen de la vida escolar 5"></button>
+            <button class="gallery-thumb" type="button" data-gallery-thumb="5" aria-label="Ver imagen 6" data-gallery-title="Comunidad técnica"><img src="Assets/WhatsApp Image 2026-08-11 at 7.06.57 PM (1).jpeg" alt="Imagen de la vida escolar 6"></button>
+            <button class="gallery-thumb" type="button" data-gallery-thumb="6" aria-label="Ver imagen 7" data-gallery-title="Aulas y talleres"><img src="Assets/WhatsApp Image 2026-08-11 at 7.06.57 PM (2).jpeg" alt="Imagen de la vida escolar 7"></button>
+            <button class="gallery-thumb" type="button" data-gallery-thumb="7" aria-label="Ver imagen 8" data-gallery-title="Proyectos escolares"><img src="Assets/WhatsApp Image 2026-08-11 at 7.06.57 PM.jpeg" alt="Imagen de la vida escolar 8"></button>
+            <button class="gallery-thumb" type="button" data-gallery-thumb="8" aria-label="Ver imagen 9" data-gallery-title="Vida institucional"><img src="Assets/WhatsApp Image 2026-08-11 at 7.06.58 PM (1).jpeg" alt="Imagen de la vida escolar 9"></button>
+            <button class="gallery-thumb" type="button" data-gallery-thumb="9" aria-label="Ver imagen 10" data-gallery-title="Identidad Malvinas"><img src="Assets/WhatsApp Image 2026-08-11 at 7.06.58 PM (2).jpeg" alt="Imagen de la vida escolar 10"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 E.E.S.T N°3 "Islas Malvinas" - Remedios de Escalada, Lanús</p>
+    <p><em>"Enseñamos profesiones, inspiramos personas."</em></p>
+    <p class="footer-credit">Hecha con <span class="heart">♥</span> por los cursos de informática 2025-actualidad</p>
+  </footer>
+
+  <script src="ui.js"></script>
+</body>
+</html>

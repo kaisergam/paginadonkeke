@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Técnico en Servicios Turísticos - EEST N°3 Islas Malvinas</title>
+  <link rel="stylesheet" href="Styles/hi.css">
+  <style>
+    .dropdown-menu { background: linear-gradient(90deg, rgba(6, 26, 52, 0.98) 0%, rgba(21, 72, 121, 0.95) 58%, rgba(47, 140, 184, 0.82) 100%); border-color: rgba(117, 207, 239, 0.4); left: 50%; transform: translateX(-50%) translateY(8px) scale(0.98); transform-origin: top center; }
+    .dropdown-menu li + li { margin-top: 12px; }
+    .dropdown-menu li a { display: block; padding: 8px 16px; color: #fff; }
+    .dropdown-menu li a:hover { background: rgba(117, 207, 239, 0.28); color: #fff; }
+    .nav-dropdown:not(.is-closing):hover .dropdown-menu,
+    .nav-dropdown.is-open .dropdown-menu,
+    .nav-dropdown:not(.is-closing):focus-within .dropdown-menu { transform: translateX(-50%) translateY(0) scale(1); }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    footer { margin-top: auto; }
+  
+
+    /* ── Nav-toggle alignment + footer fix ── */
+    @media (max-width: 768px) {
+      /* Grid de 3 columnas: logo | h1 (crece) | botón hamburguesa
+         Segunda fila: nav ocupa todo el ancho                      */
+      .header-container {
+        display: grid !important;
+        grid-template-columns: auto 1fr auto !important;
+        grid-template-rows: auto auto !important;
+        align-items: center !important;
+        gap: 0 10px !important;
+        padding: 10px 16px !important;
+      }
+      .header-container .logo {
+        grid-column: 1 !important;
+        grid-row: 1 !important;
+        align-self: center !important;
+      }
+      .header-container h1 {
+        grid-column: 2 !important;
+        grid-row: 1 !important;
+        align-self: center !important;
+        margin: 0 !important;
+        font-size: clamp(0.85rem, 4vw, 1.2rem) !important;
+        line-height: 1.2 !important;
+        white-space: normal !important;
+      }
+      .nav-toggle {
+        grid-column: 3 !important;
+        grid-row: 1 !important;
+        align-self: center !important;
+        justify-self: end !important;
+        margin: 0 !important;
+      }
+      .header-container nav {
+        grid-column: 1 / -1 !important;
+        grid-row: 2 !important;
+      }
+    }
+
+    /* Footer: elimina el degradado hacia blanco, fondo azul marino sólido a ambos lados */
+    footer {
+      background: rgb(6, 26, 52) !important;
+      background-image: none !important;
+    }
+
+    /* ── Dropdown mobile fix ── */
+    @media (max-width: 768px) {
+      .dropdown-menu {
+        position: static !important;
+        transform: none !important;
+        left: auto !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        background: linear-gradient(135deg, rgba(6, 26, 52, 0.98) 0%, rgba(21, 72, 121, 0.97) 58%, rgba(47, 140, 184, 0.90) 100%) !important;
+        border: 1px solid rgba(117, 207, 239, 0.35) !important;
+        border-radius: 10px;
+        margin-top: 6px;
+        padding: 10px 0;
+        display: none;
+        width: 100%;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+      }
+      .nav-dropdown.is-open .dropdown-menu {
+        display: block !important;
+      }
+      .dropdown-menu li + li {
+        margin-top: 2px !important;
+      }
+      .dropdown-menu li a {
+        color: #fff !important;
+        padding: 13px 22px !important;
+        font-size: 1rem !important;
+        display: block !important;
+        letter-spacing: 0.01em;
+      }
+      .dropdown-menu li a:hover {
+        background: rgba(117, 207, 239, 0.22) !important;
+      }
+    }
+
+    /* ── Galería de turismo ── */
+    .work-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin: 18px 0 6px;
+    }
+    .work-gallery figure {
+      margin: 0;
+      background: rgb(6, 26, 52);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+      border: 1px solid rgba(117, 207, 239, 0.35);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .work-gallery figure:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+    }
+    .work-gallery img {
+      display: block;
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+    }
+    .work-gallery .img-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 210px;
+      background: linear-gradient(135deg, rgba(117, 207, 239, 0.12) 0%, rgba(117, 207, 239, 0.04) 100%);
+      color: rgba(255, 255, 255, 0.35);
+      font-size: 0.85rem;
+    }
+    .work-gallery figcaption {
+      padding: 10px 14px;
+      color: #fff;
+      font-size: 0.92rem;
+      text-align: center;
+    }
+    @media (max-width: 480px) {
+      .work-gallery img,
+      .work-gallery .img-placeholder { height: 180px; }
+    }
+
+    /* ── Materias y espacios destacados en 2 columnas ── */
+    .materias-grid {
+      columns: 2;
+      column-gap: 48px;
+      margin: 12px 0 24px;
+    }
+    .materias-grid li {
+      break-inside: avoid;
+      -webkit-column-break-inside: avoid;
+      padding: 4px 0;
+      list-style: none;
+    }
+    .materias-grid li::before {
+      content: none !important;
+    }
+    @media (max-width: 768px) {
+      .materias-grid {
+        columns: 1;
+      }
+    }
+
+    /* ── Diseño curricular + Contenidos centrales en 2 columnas ── */
+    .curriculum-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+      margin-top: 32px;
+    }
+    .curriculum-columns:first-of-type {
+      margin-top: 0;
+    }
+    .curriculum-columns h3 {
+      margin-top: 0;
+    }
+    .curriculum-columns p,
+    .curriculum-columns li {
+      line-height: 1.7;
+      margin: 0;
+      padding: 4px 0 !important;
+    }
+    @media (max-width: 768px) {
+      .curriculum-columns {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ── Quitar tildes amarillos de las listas ── */
+    .contenedor-propuesta ul li {
+      list-style: none;
+      padding: 4px 0;
+    }
+    .contenedor-propuesta ul li::before {
+      content: none !important;
+    }
+    </style>
+</head>
+<body>
+  <header>
+    <div class="container header-container">
+      <img src="Assets/tecnica3.png" alt="Logo del colegio" class="logo">
+      <h1>E.E.S.T N°3 "Islas Malvinas"</h1>
+      <button class="nav-toggle" type="button" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span><span></span></button>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">Inicio</a></li>
+          <li class="nav-dropdown">
+            <button class="dropdown-toggle" type="button" aria-expanded="false">Especialidades</button>
+            <ul class="dropdown-menu">
+              <li><a href="informatica.html">Programación</a></li>
+              <li><a href="construcciones.html">Construcciones</a></li>
+              <li><a href="turismo.html">Turismo</a></li>
+            </ul>
+          </li>
+          <li><a href="galeria.html">Galería</a></li>
+          <li><a href="noticias.html">Noticias</a></li>
+          <li><a href="CONTACTO.HTML">Contacto</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="contenedor-propuesta">
+    <h2>Técnico en Servicios Turísticos</h2>
+    
+    <div class="curriculum-columns">
+      <div>
+        <h3>Una mirada al diseño curricular</h3>
+        <p>La tecnicatura en <strong>Servicios Turísticos</strong> trabaja sobre la planificación, organización, comercialización y prestación de servicios vinculados al turismo. Su enfoque integra geografía, patrimonio, comunicación, idiomas, gestión de agencias, hotelería, eventos y prácticas situadas en contextos reales de atención al visitante.</p>
+      </div>
+      <div>
+        <h3>Contenidos centrales</h3>
+        <ul>
+          <li>Reconocimiento de recursos turísticos, patrimonio natural y cultural.</li>
+          <li>Diseño de circuitos, itinerarios, paquetes y experiencias turísticas.</li>
+          <li>Comunicación, atención al cliente, información turística e idiomas.</li>
+          <li>Gestión de agencias, alojamiento, eventos y servicios complementarios.</li>
+          <li>Turismo responsable, desarrollo local y emprendimientos turísticos.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="curriculum-columns">
+      <div>
+        <h3>Perfil del egresado</h3>
+        <p>El egresado puede asistir en la organización, comercialización y venta de servicios turísticos, orientar y atender a visitantes, colaborar en la planificación y ejecución de eventos, diseñar propuestas de viaje e itinerarios, y participar en proyectos de desarrollo turístico local. Está preparado además para relevar recursos patrimoniales, elaborar material informativo y promocional, y comunicarse con turistas nacionales y extranjeros gracias a su formación en idiomas. Su perfil combina de manera equilibrada gestión, comunicación, conocimiento del territorio, patrimonio cultural y servicio al visitante.</p>
+      </div>
+      <div>
+        <h3>Salida laboral posible</h3>
+        <ul>
+          <li>Agencias de viajes, operadores turísticos y empresas de excursiones.</li>
+          <li>Hoteles, alojamientos, centros recreativos y servicios de hospitalidad.</li>
+          <li>Áreas municipales o provinciales de turismo, cultura y patrimonio.</li>
+          <li>Informante turístico, asistente de coordinación o auxiliar de eventos.</li>
+          <li>Emprendimientos de circuitos, experiencias locales o servicios para visitantes.</li>
+          <li>Continuidad académica en turismo, hotelería, guía, gestión cultural o administración.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="curriculum-columns">
+      <div>
+        <h3>Materias y espacios destacados</h3>
+        <ul class="materias-grid">
+          <li>Introducción al Turismo</li>
+          <li>Servicios Turísticos</li>
+          <li>Geografía Turística</li>
+          <li>Patrimonio Turístico</li>
+          <li>Comunicación Turística</li>
+          <li>Inglés</li>
+          <li>Portugués</li>
+          <li>Organización de Eventos</li>
+          <li>Agencia de Viajes</li>
+          <li>Hotelería</li>
+          <li>Marketing Turístico</li>
+          <li>Emprendimientos Productivos y Desarrollo Local</li>
+          <li>Prácticas Profesionalizantes</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Modalidad</h3>
+        <p><strong>Modalidad:</strong> Presencial <br><strong>Duración:</strong> 7 años <br><strong>Título:</strong> Técnico en Servicios Turísticos</p>
+      </div>
+    </div>
+
+    <h3>Galería de salidas y proyectos</h3>
+    <div class="work-gallery">
+      <figure>
+        <img src="Assets/turismo-excursion-01.jpg" alt="Estudiantes en salida educativa frente al Centro de Veteranos de Malvinas">
+        <figcaption>Salida educativa: Veteranos de Malvinas</figcaption>
+      </figure>
+      <figure>
+        <img src="Assets/turismo-excursion-02.jpg" alt="Estudiantes en recorrido guiado por el barrio">
+        <figcaption>Recorrido guiado por el barrio</figcaption>
+      </figure>
+      <figure>
+        <img src="Assets/turismo-presentacion-01.jpg" alt="Presentación sobre Leonel Scaloni y destinos turísticos">
+        <figcaption>Proyecto: Cuna de campeones y destinos turísticos</figcaption>
+      </figure>
+      <figure>
+        <img src="Assets/turismo-presentacion-02.jpg" alt="Presentación sobre Leandro Paredes y la Universidad Nacional de La Matanza">
+        <figcaption>Proyecto: historia y turismo de los jugadores</figcaption>
+      </figure>
+      <figure>
+        <img src="Assets/turismo-presentacion-03.jpg" alt="Presentación sobre Facundo Medina y Villa Fiorito">
+        <figcaption>Proyecto: Villa Fiorito, cuna de campeones</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 E.E.S.T N°3 "Islas Malvinas" - Remedios de Escalada, Lanús</p>
+    <p><em>"Enseñamos profesiones, inspiramos personas."</em></p>
+    <p class="footer-credit">Hecha con <span class="heart">♥</span> por los cursos de informática 2025-actualidad</p>
+  </footer>
+
+  <script src="ui.js"></script>
+</body>
+</html>
